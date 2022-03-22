@@ -8,7 +8,7 @@ weight: 40
 
 ```
 VDiff  [-source_cell=<cell>] [-target_cell=<cell>] [-tablet_types=primary,replica,rdonly]
-       [-limit=<max rows to diff>] [-tables=<table list>] [-format=json]
+       [-limit=<max rows to diff>] [-tables=<table list>] [-format=json] [-max_extra_rows_to_compare=1000]
        [-filtered_replication_wait_time=30s] [-debug_query] [-only_pks] <keyspace.workflow>
 ```
 
@@ -100,11 +100,18 @@ Only other format supported is json
 }]
 ```
 
+#### -max_extra_rows_to_compare
+**optional**\
+
+<div class="cmd">
+Limits the number of extra rows on both the source and target that we will perform a second compare pass on to confirm that the rows are in fact different in content and not simply returned in a different order on the source and target (which can happen when there are collation differences, e.g. different MySQL versions).
+</div>
+
 #### -debug_query
 **optional**\
 
 <div class="cmd">
-Adds a MySQL query to the report that can be used for further debugging
+Adds a MySQL query to the report that can be used for further debugging.
 </div>
 
 #### -only_pks
@@ -140,7 +147,7 @@ You may need to use one or more of the following recommendations while running l
 
 * If VDiff takes more than an hour `vtctlclient` will hit grpc/http timeouts of 1 hour. In that case you can use `vtctl` (the bundled `vctlclient` + `vtctld`) instead.
 * VDiff also synchronizes sources and targets to get consistent snapshots. If you have a high write QPS then you may encounter timeouts during the sync. Use higher values of `-filtered_replication_wait_time` to prevent that, for example `-filtered_replication_wait_time=4h`.
-* If VDiff takes more than a day set the `-wait-time` parameter, which is the maximum time a vtctl command can run for, to a value comfortably higher than the expected run time, for example `-wait_time=168h`.
+* If VDiff takes more than a day set the `-wait-time` parameter, which is the maximum time a vtctl command can run for, to a value comfortably higher than the expected run time, for example `-wait-time=168h`.
 * You can follow the progress of the command by tailing the vtctld logs. VDiff logs progress every 10 million rows. This can also give you an early indication of how long it will run for, allowing you to increase your settings if needed.
 
 ### Note

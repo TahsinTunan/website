@@ -56,6 +56,7 @@ The following global options apply to `vtgate`:
 | -enable_buffer | boolean | Enable buffering (stalling) of primary traffic during failovers. |
 | -enable_buffer_dry_run | boolean | Detect and log failover events, but do not actually buffer requests. |
 | -enable_system_settings | boolean | Enables the system settings to be changed per session at the database connection level. Override with @@enable_system_settings session variable. |
+| -enable_set_var | boolean | This will enable the use of MySQL's SET_VAR query hint for certain system variables instead of using reserved connections. |
 | -gate_query_cache_size | int | gate server query cache size, maximum number of queries to be cached. vtgate analyzes every incoming query and generate a query plan, these plans are being cached in a lru cache. This config controls the capacity of the lru cache. (default 10000) |
 | -gateway_implementation | string | The implementation of gateway (default "tabletgateway") |
 | -gateway_initial_tablet_timeout | duration | At startup, the gateway will wait up to that duration to get one tablet per keyspace/shard/tablettype (default 30s) |
@@ -130,6 +131,7 @@ The following global options apply to `vtgate`:
 | -normalize_queries | boolean | Rewrite queries with bind vars. Turn this off if the app itself sends normalized queries with bind vars. (default true) |
 | -onterm_timeout | duration | wait no more than this for OnTermSync handlers before stopping (default 10s) |
 | -opentsdb_uri | string | URI of opentsdb /api/put method |
+| -planner_version | string | Sets the default planner to use when the session has not changed it. Valid values are: V3, Gen4, Gen4Greedy and Gen4Fallback. Gen4Fallback tries the gen4 planner and falls back to the V3 planner if the gen4 fails. |
 | -pid_file | string | If set, the process will write its pid to the named file, and delete it on graceful shutdown. |
 | -port | int | port for the server |
 | -proxy_protocol | boolean | Enable HAProxy PROXY protocol on MySQL listener socket |
