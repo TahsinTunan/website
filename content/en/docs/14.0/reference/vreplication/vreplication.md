@@ -140,14 +140,14 @@ The fields are explained in the following section.
 This is the syntax of the command:
 
 ```
-VReplicationExec [-json] <tablet alias> <sql command>
+VReplicationExec [--json] <tablet alias> <sql command>
 ```
 
 Here's an example of the command to list all existing streams for
 a given tablet.
 
 ```
-vtctlclient -server localhost:15999 VReplicationExec 'tablet-100' 'select * from _vt.vreplication'
+vtctlclient --server localhost:15999 VReplicationExec 'tablet-100' 'select * from _vt.vreplication'
 ```
 
 ### Creating a stream
@@ -170,7 +170,7 @@ Alternately, you can use a python program. Here's an example:
 ```python
 cmd = [
   'vtctlclient',
-  '-server',
+  '--server',
   'localhost:15999',
   'VReplicationExec',
   'test-200',
@@ -196,7 +196,7 @@ an insert statement.  The parameters are as follows:
 * `max_replication_lag`: 99999, reserved.
 * `tablet_types`: specifies a comma separated list of tablet types to replicate from.
   If empty, the default tablet type specified by the `-vreplication_tablet_type`
-  command line flag is used, which in turn defaults to 'REPLICA'.
+  command line flag is used, which in turn defaults to 'in_order:REPLICA,PRIMARY'.
 * `time_updated`: 0, reserved.
 * `transaction_timestamp`: 0, reserved.
 * `state`: 'Init', 'Copying', 'Running', 'Stopped', 'Error'.
@@ -450,5 +450,11 @@ monitoring tools like prometheus:
 * VReplicationLagSeconds: vreplication lag behind primary per stream.
 * VReplicationSource: The source for each VReplication stream.
 * VReplicationSourceTablet: The source tablet for each VReplication stream.
+* RowStreamerMaxInnoDBTrxHistLen: Max length of the InnoDB transaction history list on a source tablet before streaming a batch of rows when copying a table.
+  * This can be modified in the running server at the `/debug/env` endpoint.
+* RowStreamerMaxMySQLReplLagSecs: Max MySQL replication lag on a source tablet before streaming a batch of rows when copying a table.
+  * This can be modified in the running server at the `/debug/env` endpoint.
+* RowStreamerWaits: The total number of times we've waited, and how long we've waited, for MySQL to fall below the `RowStreamerMax*` values on a source tablet when preparing to stream a batch of rows when copying a table.
+  * This can be seen on a per table basis in `VStreamerPhaseTiming`.
 
 Thresholds and alerts can be set to draw attention to potential problems.
